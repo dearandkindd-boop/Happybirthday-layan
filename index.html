@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For You ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Comic Neue", cursive;
+}
+
+body {
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffb6c1, #ff69b4, #ffc0cb);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: black;
+}
+
+/* floating background glow */
+body::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+  animation: floatBG 10s infinite linear;
+}
+
+@keyframes floatBG {
+  0% { transform: translate(0,0); }
+  50% { transform: translate(-10%, -10%); }
+  100% { transform: translate(0,0); }
+}
+
+#container {
+  width: 90%;
+  max-width: 700px;
+  z-index: 2;
+}
+
+.text {
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-height: 120px;
+  white-space: pre-wrap;
+}
+
+button {
+  margin-top: 30px;
+  padding: 15px 25px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  transition: 0.3s;
+  display: none;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+/* hearts */
+.heart {
+  position: absolute;
+  color: red;
+  animation: floatUp 4s linear forwards;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(100vh); opacity: 1; }
+  to { transform: translateY(-10vh); opacity: 0; }
+}
+
+/* sparkles */
+.sparkle {
+  position: absolute;
+  color: white;
+  animation: sparkle 2s linear forwards;
+}
+
+@keyframes sparkle {
+  from { opacity: 1; transform: scale(0.5); }
+  to { opacity: 0; transform: scale(1.5); }
+}
+</style>
+</head>
+
+<body>
+
+<div id="container">
+  <div class="text" id="text"></div>
+  <button id="btn">Ooo i wonder whats this!</button>
+</div>
+
+<script>
+const textEl = document.getElementById("text");
+const btn = document.getElementById("btn");
+
+const typingSpeed = 55;
+
+/* typewriter (PROMISE based so we can WAIT properly) */
+function typeText(text) {
+  return new Promise(resolve => {
+    let i = 0;
+    textEl.innerHTML = "";
+
+    let interval = setInterval(() => {
+
+      textEl.innerHTML += text[i];
+
+      // optional typing sound hook
+      // new Audio("typing.mp3").play();
+
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, typingSpeed);
+  });
+}
+
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+function spawnHearts() {
+  setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = Math.random() * 20 + 10 + "px";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 4000);
+  }, 250);
+}
+
+function spawnSparkles() {
+  setInterval(() => {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.innerHTML = "✨";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = Math.random() * 100 + "vh";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 2000);
+  }, 200);
+}
+
+async function run() {
+
+  spawnHearts();
+  spawnSparkles();
+
+  // Scene 1
+  await typeText("Hey there Love..");
+  await wait(2000);
+
+  await typeText("HAPPY BIRTHDAY BABY!");
+  await wait(1500);
+
+  btn.style.display = "inline-block";
+}
+
+btn.onclick = async () => {
+  btn.style.display = "none";
+
+  // Scene 2 (letter)
+  await typeText(
+`i hope ur doing great heh
+
+i just wanted to say HAPPY BIRTHDAY baby
+
+and i wanted to thank you for everything and every time you've been there for me.
+
+I LOVE YOU SO MUCH ❤️`
+  );
+
+  // NOW we WAIT ONLY until typing is done (no fixed 30s anymore)
+  await wait(1200);
+
+  // Scene 3 final message
+  await typeText(
+`I'm prob asleep rn baby but i'll give u ur presents once i wake up..
+
+cuz you have been SUCH a goodgirl this year! ❤️
+
+OKAY BYE BABYY HEHHH ILY`
+  );
+
+  // explosion effect
+  explode();
+};
+
+/* simple confetti burst */
+function explode() {
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement("div");
+    c.innerHTML = "🎉";
+    c.style.position = "absolute";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.top = "-10vh";
+    c.style.fontSize = "20px";
+    c.style.animation = "fall 3s linear forwards";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+
+  const style = document.createElement("style");
+  style.innerHTML = `
+  @keyframes fall {
+    to { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+  }`;
+  document.head.appendChild(style);
+}
+
+run();
+</script>
+
+</body>
+</html>
